@@ -229,3 +229,31 @@ body{background-image:var(--pat);background-attachment:fixed}
 .food-emoji{font-size:4rem;line-height:1}.food-top img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .4s}.card.food:hover .food-top img{transform:scale(1.06)}
 .veg{position:absolute;top:10px;right:10px;z-index:2;width:22px;height:22px;border:2px solid #16a34a;border-radius:4px;display:grid;place-items:center;background:#fff}.veg::after{content:'';width:10px;height:10px;border-radius:50%;background:#16a34a}.veg.nv{border-color:#b91c1c}.veg.nv::after{background:#b91c1c}
 .card.food h3{margin:0 0 .1rem}.card.food p{margin:.5rem 0;font-size:.95rem}
+
+/* ===== Dashboard responsive ===== */
+.prof-head > div:last-child { min-width: 0; }
+.prof-head h1, .prof-head p { overflow-wrap: anywhere; }
+
+/* tabs: ek line mein swipe karke scroll */
+.tabs { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tabs button { white-space: nowrap; flex: 0 0 auto; }
+
+.tour .row.between { flex-wrap: wrap; gap: .5rem; }
+.tour .cost { display: flex; flex-wrap: wrap; gap: .8rem; }
+.tour img, .tour iframe { max-width: 100%; }
+
+@media (max-width: 640px) {
+  .prof-head { flex-direction: column; text-align: center; }
+  .prof-head .avatar { width: 56px; height: 56px; font-size: 1.5rem; }
+  .dash-stats { grid-template-columns: 1fr 1fr; gap: .8rem; }
+  .dash-stats .stat strong { font-size: 1.5rem; }
+  .tabs button { padding: .6rem .8rem; font-size: .92rem; }
+  .tour.card.pad { padding: 1rem; }
+  .tour-grid { gap: 1rem; }
+  .t-day { flex-direction: column; gap: .2rem; }
+  .narrow { max-width: 100%; }
+  #pf .btn { width: 100%; }            /* Save / Log out / Delete buttons full width */
+}
+
+
