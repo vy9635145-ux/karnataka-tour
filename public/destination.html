@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Karnataka Tour – explore Hampi, Coorg, Mysuru, Gokarna and more.">
+<title>Destination | Karnataka Tour</title><link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&family=Noto+Sans+Kannada:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script>try{document.documentElement.dataset.theme=JSON.parse(localStorage.getItem('kt_theme'))||'light'}catch(e){}</script>
+</head><body><a href="#main" class="skip">Skip to content</a><noscript>Please enable JavaScript to use this site.</noscript><div id="site-header"></div><main id="main">
+<div id="dest-root"></div>
+</main><div id="site-footer"></div>
+<script src="js/data.js"></script><script src="js/auth.js"></script><script src="js/app.js"></script><script src="js/config.js"></script><script src="js/maps.js"></script>
+<script>
+const id = new URLSearchParams(location.search).get('id');
+const d = getDest(id);
+const root = $('#dest-root');
+if (!d) {
+  root.innerHTML = '<div class="container page center"><h1 class="big404">404</h1><h2>Destination not found</h2><a class="btn" href="explore.html">Explore Karnataka</a></div>';
+} else {
+  document.title = d.name + ' | Karnataka Tour';
+  const ul = (a) => `<ul class="ticks">${a.map((x) => `<li>${x}</li>`).join('')}</ul>`;
+  const nearby = d.nearby.map(getDest).filter(Boolean);
+  const related = destinations.filter((x) => x.id !== d.id && x.cats.some((c) => d.cats.includes(c))).slice(0, 3);
+  const weather = d.cats.includes('hill') ? '18–26°C, misty' : d.cats.includes('beach') ? '25–33°C, humid' : '22–34°C, mostly sunny';
+  const images = [1, 2, 3, 4, 5, 6].map((n) => ({ thumb: `images/gallery/${d.id}-${n}.jpg`, full: `images/gallery/${d.id}-${n}.jpg`, alt: `${d.name} photo ${n}` }));
+  const dl = 0.25, bbox = `${d.lng - dl},${d.lat - dl},${d.lng + dl},${d.lat + dl}`;
+  root.innerHTML = `
+  <section class="cover" style="background-image:linear-gradient(180deg,rgba(0,0,0,.25),rgba(0,0,0,.7)),url(images/places/${d.id}.jpg)"><div class="container">
+    <span class="chip-abs static">${d.cats.join(' • ')}</span><h1>${d.name}</h1>
+    <p>📍 ${d.region}, Karnataka &nbsp; ★ ${d.rating}</p><button class="btn" id="fav-main"></button></div></section>
+  <div class="container page detail"><div>
+    <section><h2>Overview</h2><p>${d.desc}</p></section>
+    <section><h2>History &amp; Culture</h2><p>${d.history}</p></section>
+    <section><h2>${t('gallery')}</h2><div class="gal">${images.map((im, i) => `<button class="gal-item" data-i="${i}" aria-label="Open ${im.alt}"><img loading="lazy" src="${im.thumb}" alt="${im.alt}" onerror="fb(this)"></button>`).join('')}</div></section>
+    <section><h2>Main Attractions</h2>${ul(d.attractions)}</section>
+    <section><h2>Local Food</h2>${ul(d.food)}</section>
+    <section><h2>Travel Tips</h2>${ul(d.tips)}</section>
+    <section><h2>Map &amp; Route</h2><div id="dest-map"></div></section>
+    <section><h2>${t('reviews')}</h2><p class="muted">Demonstration data – reviews are stored only in your browser.</p>
+      <div class="rev-grid"><div class="card pad"><div class="avg"><span id="avg">0.0</span><div id="avg-stars"></div></div>
+        <form id="rev-form" class="form"><div class="star-pick" role="radiogroup" aria-label="Rating" id="picker">${[1, 2, 3, 4, 5].map((n) => `<button type="button" role="radio" aria-checked="false" aria-label="${n} star" data-n="${n}">☆</button>`).join('')}</div>
+          <label>Name<input id="rn" placeholder="Your name"></label>
+          <label>Review<textarea id="rt" required rows="3" placeholder="Share your experience"></textarea></label>
+          <button class="btn" type="submit">${t('submit_review')}</button></form></div>
+        <div class="rev-list" id="rev-list"></div></div></section>
+  </div><aside>
+    <div class="card pad side">
+      <p>📅 <b>Best time:</b> ${d.best}</p><p>🚆 <b>How to reach:</b> ${d.reach}</p>
+      <p>💰 <b>Est. budget:</b> ${inr(d.cost)} per person/day <small class="muted">(sample)</small></p>
+      <p>☁️ <b>Typical weather:</b> ${weather} <small class="muted">(sample)</small></p>
+      <a class="btn block" href="explore.html?tab=planner&d=${d.id}">${t('plan_trip')}</a><a class="btn ghost-dark block" href="explore.html?tab=budget">Budget Calculator</a></div>
+    <div class="card pad side"><h3>Nearby Places</h3>${nearby.map((n) => `<a class="mini" href="destination.html?id=${n.id}"><img src="images/places/${n.id}.jpg" alt="" onerror="fb(this)"><span>${n.name}</span></a>`).join('')}</div>
+  </aside></div>
+  <div class="container sec"><h2>${t('related')}</h2><div class="grid">${related.map(cardHTML).join('')}</div></div>`;
+
+  KTMap.widget($('#dest-map'), d);
+
+  // favourite button + gallery
+  const favBtn = $('#fav-main');
+  const syncFav = () => { favBtn.textContent = favs.includes(d.id) ? '♥ Saved' : '♡ Save destination'; };
+  syncFav();
+  favBtn.addEventListener('click', () => {
+    favs = favs.includes(d.id) ? favs.filter((x) => x !== d.id) : [...favs, d.id]; store.set('kt_favs', favs); syncFav();
+    toast(favs.includes(d.id) ? 'Saved to favourites ♥' : 'Removed from favourites');
+  });
+  function onFavChange() { syncFav(); }
+  $$('.gal-item').forEach((b) => b.addEventListener('click', () => openLightbox(images, +b.dataset.i)));
+
+  // reviews (demo, localStorage)
+  const KEY = 'kt_reviews_' + d.id;
+  let reviews = store.get(KEY, [
+    { id: 's1', name: 'Anita R.', rating: 5, text: 'Absolutely stunning – go early in the morning.', date: '2026-02-10' },
+    { id: 's2', name: 'Kiran M.', rating: 4, text: 'Great place, a bit crowded on weekends.', date: '2026-01-22' }]);
+  let rating = 0;
+  const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  function drawReviews() {
+    const avg = reviews.length ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length : 0;
+    $('#avg').textContent = avg.toFixed(1); $('#avg-stars').innerHTML = stars(avg) + `<br><small>${reviews.length} reviews</small>`;
+    $('#rev-list').innerHTML = reviews.map((r) => `<div class="card pad"><div class="row between"><strong>${esc(r.name)}</strong><small class="muted">${r.date}</small></div>${stars(r.rating)}<p>${esc(r.text)}</p></div>`).join('');
+  }
+  function drawPicker() { $$('#picker button').forEach((b) => { const on = +b.dataset.n <= rating; b.textContent = on ? '★' : '☆'; b.setAttribute('aria-checked', +b.dataset.n === rating); }); }
+  $('#picker').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { rating = +b.dataset.n; drawPicker(); } });
+  $('#rev-form').addEventListener('submit', (e) => {
+    e.preventDefault(); if (!rating) return toast('Please select a star rating');
+    reviews = [{ id: String(Date.now()), name: $('#rn').value.trim() || 'Guest', rating, text: $('#rt').value.trim(), date: new Date().toISOString().slice(0, 10) }, ...reviews];
+    store.set(KEY, reviews); rating = 0; e.target.reset(); drawPicker(); drawReviews(); toast('Review added (demo, stored in your browser)');
+  });
+  drawReviews();
+}
+</script></body></html>
