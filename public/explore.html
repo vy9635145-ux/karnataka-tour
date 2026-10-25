@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Karnataka Tour – explore Hampi, Coorg, Mysuru, Gokarna and more.">
+<title>Explore Karnataka | Karnataka Tour</title><link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&family=Noto+Sans+Kannada:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script>try{document.documentElement.dataset.theme=JSON.parse(localStorage.getItem('kt_theme'))||'light'}catch(e){}</script>
+</head><body><a href="#main" class="skip">Skip to content</a><noscript>Please enable JavaScript to use this site.</noscript><div id="site-header"></div><main id="main">
+<div class="container page"><h1>Explore Karnataka</h1>
+<div class="tabs" role="tablist" aria-label="Explore sections">
+  <button role="tab" data-tab="destinations">📍 Destinations</button>
+  <button role="tab" data-tab="planner">🗓️ Trip Planner</button>
+  <button role="tab" data-tab="budget">💰 Budget Calculator</button></div>
+
+<section id="tab-destinations" role="tabpanel"><p class="muted" id="count"></p>
+  <div class="search light"><span class="ico-s">🔍</span><input id="q" aria-label="Search destinations by name" data-i18n-ph="search_ph"></div>
+  <div class="chips" id="chips" role="group" aria-label="Filters"></div><div id="results"></div></section>
+
+<section id="tab-planner" role="tabpanel" hidden>
+<p class="muted">You plan the whole trip yourself – we only give recommendations for budget, people, days, food and shopping. Press “Confirm Tour” to save it (with map and route) in your dashboard.</p>
+<div class="planner"><div class="card pad form" id="pl-form">
+  <h3 style="margin:0">1. Trip basics</h3>
+  <label>Tour name<input id="pl-name" maxlength="60" placeholder="e.g. Family trip to Coorg"></label>
+  <label>Destination<select id="pl-dest"></select></label>
+  <label>Travellers (people)<input id="pl-ppl" type="number" min="1" max="40" value="2"></label>
+  <label><span>Days: <b id="pl-dv">3</b></span><input id="pl-days" type="range" min="1" max="10" value="3"></label>
+  <label>Travel mode<select id="pl-mode"></select></label>
+  <label>Hotel category<select id="pl-hotel"></select></label>
+  <h3 style="margin:.6rem 0 0">2. Your budget</h3>
+  <label>Total budget (₹)<input id="pl-bud" type="number" min="1000" step="500" value="20000"></label>
+  <label>Food per person / day (₹)<input id="pl-food" type="number" min="0" step="50" value="600"></label>
+  <label>Activities &amp; entry fees per person / day (₹)<input id="pl-act" type="number" min="0" step="50" value="500"></label>
+  <label>Shopping budget – whole trip (₹)<input id="pl-shop" type="number" min="0" step="100" value="1500"></label>
+</div>
+<div class="card pad" id="pl-reco" aria-live="polite"></div></div>
+
+<div class="card pad gap" id="pl-build"><h3 style="margin-top:0">3. Plan your days (your own plan)</h3>
+  <div class="chips" id="pl-tabs" role="tablist" aria-label="Days"></div>
+  <div class="pl-add"><select id="pl-k" aria-label="Type"><option value="visit">🏛️ Visit</option><option value="food">🍽️ Food</option><option value="shop">🛍️ Shopping</option><option value="stay">🏨 Stay</option><option value="other">📝 Other</option></select>
+    <input id="pl-t" maxlength="80" placeholder="What will you do? e.g. Sunrise at Raja’s Seat" aria-label="Activity"><input id="pl-c" type="number" min="0" step="50" placeholder="₹ cost (optional)" aria-label="Cost"><button class="btn sm" type="button" id="pl-addbtn">+ Add</button></div>
+  <p class="muted" style="margin:.8rem 0 .3rem"><small>Tap a suggestion to add it to the selected day:</small></p><div class="chips" id="pl-sugg"></div>
+  <div id="pl-items" class="pl-items"></div></div>
+
+<div class="card pad gap" id="pl-sum"><h3 style="margin-top:0">4. Your trip summary</h3><div id="pl-parts"></div>
+  <div class="cost big"><div><small>Estimated total</small><strong id="pl-total"></strong></div><div><small>Per person</small><strong id="pl-pp"></strong></div><div><small id="pl-dl">Budget</small><strong id="pl-diff"></strong></div></div>
+  <p class="muted" id="pl-planned"></p>
+  <button class="btn block" type="button" id="pl-confirm">✅ Confirm Tour</button><p class="hint" id="pl-hint">Confirmed tours are saved in your dashboard under “Tours”, with a map and the route from your location.</p></div>
+</section>
+
+<section id="tab-budget" role="tabpanel" hidden><p class="muted">Estimates use sample rates for demonstration only.</p>
+<div class="planner"><div class="card pad form" id="bf">
+  <label>Destination<select id="b-dest"></select></label>
+  <label>Tour name<input id="b-name" maxlength="60" placeholder="e.g. Coorg weekend"></label>
+  <label>Travellers<input id="b-ppl" type="number" min="1" value="2"></label>
+  <label>Days<input id="b-days" type="number" min="1" value="3"></label>
+  <label>Travel mode<select id="b-mode"></select></label>
+  <label>Hotel category<select id="b-hotel"></select></label>
+  <label>Food per person/day (₹)<input id="b-food" type="number" min="0" step="50" value="600"></label>
+  <label>Activities per person/day (₹)<input id="b-act" type="number" min="0" step="50" value="500"></label></div>
+<div class="card pad"><h2>Estimate</h2><div id="b-parts"></div>
+  <div class="cost big"><div><small>Estimated total</small><strong id="b-total"></strong></div><div><small>Per person</small><strong id="b-pp"></strong></div></div>
+  <button class="btn block" type="button" id="b-confirm">✅ Confirm Tour</button><p class="hint" id="b-hint">Confirmed tours are saved in your dashboard under “Tours”.</p></div></div></section>
+</div>
+</main><div id="site-footer"></div>
+<script src="js/data.js"></script><script src="js/api.js"></script><script src="js/auth.js"></script><script src="js/app.js"></script>
+<script>
+/* ---------- tabs ---------- */
+const params = new URLSearchParams(location.search);
+const TABS = ['destinations', 'planner', 'budget'];
+function showTab(name, push) {
+  if (!TABS.includes(name)) name = 'destinations';
+  TABS.forEach((n) => { $('#tab-' + n).hidden = n !== name; });
+  $$('.tabs button').forEach((b) => { const on = b.dataset.tab === name; b.classList.toggle('active', on); b.setAttribute('aria-selected', on); });
+  if (push) { try { const p = new URLSearchParams(location.search); p.set('tab', name); history.replaceState(null, '', location.pathname + '?' + p); } catch (e) { /* file:// */ } }
+}
+$('.tabs').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) showTab(b.dataset.tab, true); });
+
+/* ---------- destinations: search + filters ---------- */
+let q = params.get('q') || '', f = params.get('f') || 'all';
+$('#q').value = q;
+$('#chips').innerHTML = filters.map((x) => `<button class="chip" data-f="${x.id}">${x.id === 'all' ? t('all') : x.label}</button>`).join('');
+function render() {
+  $$('#chips .chip').forEach((b) => { const on = b.dataset.f === f; b.classList.toggle('active', on); b.setAttribute('aria-pressed', on); });
+  const list = destinations.filter((d) => matchesFilter(d, f) && (d.name + ' ' + d.region).toLowerCase().includes(q.trim().toLowerCase()));
+  $('#count').textContent = `${list.length} of ${destinations.length} destinations`;
+  $('#results').innerHTML = list.length ? `<div class="grid">${list.map(cardHTML).join('')}</div>` : `<p class="empty">${t('no_results')}</p>`;
+}
+$('#results').innerHTML = '<div class="grid">' + '<div class="card skel"><div class="sk-img"></div><div class="sk-line"></div><div class="sk-line short"></div></div>'.repeat(6) + '</div>';
+setTimeout(render, 450);
+$('#q').addEventListener('input', (e) => { q = e.target.value; render(); });
+$('#chips').addEventListener('click', (e) => { const b = e.target.closest('.chip'); if (b) { f = b.dataset.f; render(); } });
+
+/* ---------- budget calculator ---------- */
+const modes = { 'Bus': 900, 'Train': 1200, 'Self-drive car (share)': 1800, 'Flight': 5500 }; // round trip / person (sample)
+const hotels = { 'Budget stay': 1200, 'Mid-range hotel': 3000, 'Luxury resort': 7500 };       // per room/night (sample)
+$('#b-mode').innerHTML = Object.keys(modes).map((m) => `<option${m === 'Train' ? ' selected' : ''}>${m}</option>`).join('');
+$('#b-hotel').innerHTML = Object.keys(hotels).map((m) => `<option${m === 'Mid-range hotel' ? ' selected' : ''}>${m}</option>`).join('');
+$('#b-dest').innerHTML = destinations.map((x) => `<option value="${x.id}">${x.name}</option>`).join('');
+const preB = params.get('d'); if (preB && getDest(preB)) $('#b-dest').value = preB;
+const num = (id, min) => Math.max(min, +$('#' + id).value || min);
+let lastCalc = null;
+function calc() {
+  const ppl = num('b-ppl', 1), days = num('b-days', 1), food = num('b-food', 0), act = num('b-act', 0), rooms = Math.ceil(ppl / 2);
+  const parts = [['Transport', modes[$('#b-mode').value] * ppl], [`Stay (${rooms} room${rooms > 1 ? 's' : ''})`, hotels[$('#b-hotel').value] * rooms * Math.max(days - 1, 1)], ['Food', food * ppl * days], ['Activities', act * ppl * days]];
+  const total = parts.reduce((s, p) => s + p[1], 0);
+  $('#b-parts').innerHTML = parts.map(([k, v]) => `<div class="bar"><div class="row between"><span>${k}</span><b>${inr(v)}</b></div><div class="track"><div style="width:${total ? v / total * 100 : 0}%"></div></div></div>`).join('');
+  $('#b-total').textContent = inr(total); $('#b-pp').textContent = inr(total / ppl);
+  lastCalc = { travellers: ppl, days, mode: $('#b-mode').value, hotel: $('#b-hotel').value, food, act, parts, total, pp: Math.round(total / ppl) };
+}
+$$('#bf input, #bf select').forEach((el) => el.addEventListener('input', calc));
+calc();
+$('#b-confirm').addEventListener('click', () => {
+  if (!auth.current()) { toast('Please log in to confirm your tour'); setTimeout(() => { location.href = 'login.html?next=' + encodeURIComponent('explore.html?tab=budget'); }, 900); return; }
+  calc();
+  const tour = { id: 't' + Date.now(), ts: Date.now(), dest: $('#b-dest').value, name: $('#b-name').value.trim() || ('Trip to ' + getDest($('#b-dest').value).name), ...lastCalc, total: Math.round(lastCalc.total), parts: lastCalc.parts.map(([k, v]) => [k, Math.round(v)]) };
+  auth.data.set('tours', [tour, ...auth.data.get('tours')]);
+  toast('Tour confirmed ✓'); $('#b-hint').innerHTML = '✅ Tour confirmed and saved. <a class="link" href="profile.html">View in dashboard →</a>';
+});
+
+/* ---------- trip planner (user plans; we recommend) ---------- */
+const mult = { Budget: 0.8, Standard: 1.2, Luxury: 2.4 }; // multiplies the destination's usual per-person/day cost
+const KIND = { visit: '🏛️', food: '🍽️', shop: '🛍️', stay: '🏨', other: '📝' };
+const plSel = $('#pl-dest'), plMode = $('#pl-mode'), plHotel = $('#pl-hotel');
+plSel.innerHTML = destinations.map((x) => `<option value="${x.id}">${x.name}</option>`).join('');
+plMode.innerHTML = Object.keys(modes).map((m) => `<option${m === 'Train' ? ' selected' : ''}>${m}</option>`).join('');
+plHotel.innerHTML = Object.keys(hotels).map((m) => `<option${m === 'Mid-range hotel' ? ' selected' : ''}>${m}</option>`).join('');
+const preP = params.get('d'); if (preP && getDest(preP)) plSel.value = preP;
+let plan = [[]], curDay = 0;
+const SPLIT = [['Transport', 20], ['Stay', 30], ['Food', 20], ['Activities', 12], ['Shopping', 10], ['Emergency buffer', 8]];
+const plS = () => ({ d: getDest(plSel.value), ppl: num('pl-ppl', 1), days: Math.max(1, +$('#pl-days').value || 1), mode: plMode.value, hotel: plHotel.value, bud: Math.max(0, +$('#pl-bud').value || 0),
+  food: Math.max(0, +$('#pl-food').value || 0), act: Math.max(0, +$('#pl-act').value || 0), shop: Math.max(0, +$('#pl-shop').value || 0) });
+function plParts(s) {
+  const rooms = Math.ceil(s.ppl / 2);
+  return [['Transport', modes[s.mode] * s.ppl], [`Stay (${rooms} room${rooms > 1 ? 's' : ''})`, hotels[s.hotel] * rooms * Math.max(s.days - 1, 1)], ['Food', s.food * s.ppl * s.days], ['Activities', s.act * s.ppl * s.days], ['Shopping', s.shop]];
+}
+function vehicle(n) { return n <= 1 ? 'a bus/train seat or a bike taxi is cheapest' : n <= 4 ? 'one hatchback/sedan cab fits everyone' : n <= 7 ? 'one SUV/MUV (Innova type) fits everyone' : n <= 12 ? 'book a 12-seater tempo traveller' : 'book a mini-bus or two tempo travellers'; }
+function plReco() {
+  const s = plS(), d = s.d, [lo, hi] = idealDays(d), rooms = Math.ceil(s.ppl / 2);
+  const pppd = s.ppl * s.days ? s.bud / (s.ppl * s.days) : 0, b = d.cost * mult.Budget, st = d.cost * mult.Standard, lx = d.cost * mult.Luxury;
+  const tier = pppd < b ? 'below the usual Budget level – choose hostels/homestays and local buses' : pppd < st ? 'a Budget trip' : pppd < lx ? 'a comfortable Standard trip' : 'a Luxury trip';
+  const dayMsg = s.days < lo ? `You chose ${s.days} day${s.days > 1 ? 's' : ''}. ${d.name} is better with ${lo}–${hi} days.` : s.days > hi ? `You chose ${s.days} days – more than the usual ${lo}–${hi}. Add nearby places like ${d.nearby.map(getDest).filter(Boolean).map((x) => x.name).join(', ') || 'neighbouring towns'}.` : `${s.days} days is a good length (ideal ${lo}–${hi}).`;
+  const sug = SPLIT.map(([k, p]) => [k, Math.round(s.bud * p / 100 / 10) * 10, p]);
+  const fPD = Math.round(s.bud * .2 / (s.ppl * s.days) / 10) * 10, aPD = Math.round(s.bud * .12 / (s.ppl * s.days) / 10) * 10, sh = Math.round(s.bud * .1 / 10) * 10;
+  $('#pl-reco').innerHTML = `<h3 style="margin-top:0">💡 Recommendations for ${d.name}</h3>
+    <p><b>📅 Days:</b> ${dayMsg}<br><b>🌤️ Best time:</b> ${d.best}<br><b>🧭 Getting there:</b> ${d.reach}</p>
+    <p><b>👥 People:</b> ${s.ppl} traveller${s.ppl > 1 ? 's' : ''} → ${rooms} room${rooms > 1 ? 's' : ''} (2 per room); ${vehicle(s.ppl)}.${s.ppl >= 6 ? ' Large groups should book stay and transport early.' : ''}</p>
+    <p><b>💰 Budget:</b> ${inr(s.bud)} = about <b>${inr(pppd)}</b> per person per day → ${tier}. Typical cost here: Budget ~${inr(b)}, Standard ~${inr(st)}, Luxury ~${inr(lx)} per person/day.</p>
+    <div class="reco-split"><b>Suggested split of your budget</b>${sug.map(([k, v, p]) => `<div class="row between"><span>${k} <small class="muted">${p}%</small></span><b>${inr(v)}</b></div>`).join('')}
+      <button class="btn sm ghost-dark" type="button" id="pl-apply">Use suggested food / activities / shopping</button></div>
+    <p><b>🍽️ Food to try:</b> ${d.food.join(', ')}. Suggested ~${inr(fPD)} per person/day.</p>
+    <p><b>🛍️ Shopping ideas:</b> ${(SHOP[d.id] || ['Local handicrafts']).join(', ')}. Suggested ~${inr(sh)} for the trip.</p>
+    <p><b>📝 Tips:</b> ${d.tips.join(' • ')}</p>`;
+  $('#pl-apply').addEventListener('click', () => { $('#pl-food').value = fPD; $('#pl-act').value = aPD; $('#pl-shop').value = sh; plAll(); toast('Suggested amounts applied'); });
+}
+function plSugg() {
+  const d = getDest(plSel.value);
+  const mk = (k, arr) => arr.map((x) => `<button type="button" class="chip" data-k="${k}" data-t="${esc(x)}">${KIND[k]} ${esc(x)}</button>`).join('');
+  $('#pl-sugg').innerHTML = mk('visit', d.attractions) + mk('food', d.food) + mk('shop', (SHOP[d.id] || []).slice(0, 3));
+}
+function plDays() {
+  const n = plS().days; while (plan.length < n) plan.push([]); plan.length = n; if (curDay >= n) curDay = n - 1;
+  $('#pl-tabs').innerHTML = plan.map((p, i) => `<button type="button" class="chip${i === curDay ? ' active' : ''}" data-day="${i}" role="tab" aria-selected="${i === curDay}">Day ${i + 1}${p.length ? ' (' + p.length + ')' : ''}</button>`).join('');
+  const items = plan[curDay];
+  $('#pl-items').innerHTML = items.length ? items.map((it, i) => `<div class="pl-item"><span>${KIND[it.k]}</span><span class="pl-t">${esc(it.t)}</span><b>${it.c ? inr(it.c) : ''}</b><button type="button" class="icon-btn" data-del="${i}" aria-label="Remove">✕</button></div>`).join('')
+    : `<p class="empty">Nothing planned for Day ${curDay + 1} yet. Add your own activities above or tap a suggestion.</p>`;
+}
+function plSummary() {
+  const s = plS(), parts = plParts(s), total = parts.reduce((a, p) => a + p[1], 0), diff = s.bud - total;
+  $('#pl-parts').innerHTML = parts.map(([k, v]) => `<div class="bar"><div class="row between"><span>${k}</span><b>${inr(v)}</b></div><div class="track"><div style="width:${total ? v / total * 100 : 0}%"></div></div></div>`).join('');
+  $('#pl-total').textContent = inr(total); $('#pl-pp').textContent = inr(total / s.ppl);
+  $('#pl-dl').textContent = diff >= 0 ? 'Under budget by' : 'Over budget by'; $('#pl-diff').textContent = inr(Math.abs(diff)); $('#pl-diff').className = diff >= 0 ? 'ok' : 'bad';
+  const planned = plan.flat().reduce((a, it) => a + (it.c || 0), 0), cnt = plan.flat().length;
+  $('#pl-planned').textContent = cnt ? `Your day plan has ${cnt} item${cnt > 1 ? 's' : ''} with ${inr(planned)} of entered costs (already part of Food / Activities / Shopping above – not added twice).` : 'Add activities to your days to build your own plan.';
+}
+function plAll() { $('#pl-dv').textContent = $('#pl-days').value; plReco(); plDays(); plSummary(); }
+$('#pl-form').addEventListener('input', (e) => { if (e.target.id === 'pl-dest') { plan = [[]]; curDay = 0; plSugg(); if (!$('#pl-name').value.trim()) { /* name stays empty → default used */ } } plAll(); });
+$('#pl-tabs').addEventListener('click', (e) => { const b = e.target.closest('[data-day]'); if (b) { curDay = +b.dataset.day; plDays(); } });
+$('#pl-sugg').addEventListener('click', (e) => { const b = e.target.closest('[data-k]'); if (b) { plan[curDay].push({ k: b.dataset.k, t: b.dataset.t, c: 0 }); plDays(); plSummary(); } });
+$('#pl-items').addEventListener('click', (e) => { const b = e.target.closest('[data-del]'); if (b) { plan[curDay].splice(+b.dataset.del, 1); plDays(); plSummary(); } });
+function plAdd() { const t = $('#pl-t').value.trim(); if (!t) { toast('Please type what you will do'); $('#pl-t').focus(); return; } plan[curDay].push({ k: $('#pl-k').value, t, c: Math.max(0, +$('#pl-c').value || 0) }); $('#pl-t').value = ''; $('#pl-c').value = ''; plDays(); plSummary(); $('#pl-t').focus(); }
+$('#pl-addbtn').addEventListener('click', plAdd);
+$('#pl-t').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); plAdd(); } });
+const DRAFT = 'kt_plan_draft';
+function plRestore() { try { const x = JSON.parse(sessionStorage.getItem(DRAFT)); if (!x) return; sessionStorage.removeItem(DRAFT); Object.entries(x.f).forEach(([k, v]) => { $('#' + k).value = v; }); plan = x.plan; } catch (e) { /* none */ } }
+$('#pl-confirm').addEventListener('click', () => {
+  const s = plS(), parts = plParts(s), total = Math.round(parts.reduce((a, p) => a + p[1], 0));
+  if (!auth.current()) {
+    try { const f = {}; ['pl-name', 'pl-dest', 'pl-ppl', 'pl-days', 'pl-mode', 'pl-hotel', 'pl-bud', 'pl-food', 'pl-act', 'pl-shop'].forEach((k) => { f[k] = $('#' + k).value; }); sessionStorage.setItem(DRAFT, JSON.stringify({ f, plan })); } catch (e) { /* ignore */ }
+    toast('Please log in to confirm your tour (your plan is kept)'); setTimeout(() => { location.href = 'login.html?next=' + encodeURIComponent('explore.html?tab=planner'); }, 1100); return;
+  }
+  const tour = { id: 't' + Date.now(), ts: Date.now(), dest: s.d.id, name: $('#pl-name').value.trim() || 'Trip to ' + s.d.name, travellers: s.ppl, days: s.days, mode: s.mode, hotel: s.hotel, budget: s.bud, food: s.food, act: s.act, shop: s.shop,
+    parts: parts.map(([k, v]) => [k, Math.round(v)]), total, pp: Math.round(total / s.ppl), plan: plan.map((day) => day.map((it) => ({ ...it }))) };
+  auth.data.set('tours', [tour, ...auth.data.get('tours')]);
+  toast('Tour confirmed ✓'); $('#pl-hint').innerHTML = '✅ Tour confirmed and saved. <a class="link" href="profile.html">See it with the map and route in your dashboard →</a>';
+});
+plRestore(); plSugg(); plAll();
+
+showTab(params.get('tab') || 'destinations', false);
+</script></body></html>

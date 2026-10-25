@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>My Dashboard | Karnataka Tour</title><link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&family=Noto+Sans+Kannada:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script>try{document.documentElement.dataset.theme=JSON.parse(localStorage.getItem("kt_theme"))||"light"}catch(e){}</script>
+</head><body><a href="#main" class="skip">Skip to content</a><noscript>Please enable JavaScript to use this site.</noscript><div id="site-header"></div><main id="main">
+<div class="container page" id="pf" hidden>
+  <div class="prof-head"><div class="avatar" id="av"></div><div><h1 id="pn" style="margin:0"></h1><p class="muted" id="pe" style="margin:0"></p><small class="muted" id="pc"></small></div></div>
+  <div class="grid four dash-stats"><div class="card pad stat"><strong id="st-t">0</strong><span>Confirmed tours</span></div><div class="card pad stat"><strong id="st-f">0</strong><span>Favourite places</span></div></div>
+  <div class="tabs" role="tablist"><button class="active" data-tab="t">Tours</button><button data-tab="f">Favourite places</button><button data-tab="d">Details</button><button data-tab="s">Security</button><button data-tab="a">Account</button></div>
+  <section data-pane="t"><div id="tours" class="tours-list"></div></section>
+  <section data-pane="f" hidden><div class="grid" id="favs"></div></section>
+  <section data-pane="d" hidden><form class="card pad form narrow" id="df"><label>Full name<input name="name" required maxlength="60"></label><label>Email<input id="em" disabled></label><label>Phone<input name="phone" type="tel"></label><p class="form-msg" id="m1" role="alert"></p><button class="btn" type="submit">Save changes</button></form></section>
+  <section data-pane="s" hidden><form class="card pad form narrow" id="sf"><label>Current password<input name="old" type="password" autocomplete="current-password" required></label><label>New password<input name="nw" type="password" autocomplete="new-password" required minlength="8"></label><label>Confirm new password<input name="cf" type="password" autocomplete="new-password" required></label><p class="form-msg" id="m2" role="alert"></p><button class="btn" type="submit">Change password</button></form></section>
+  <section data-pane="a" hidden><div class="card pad narrow"><h3>Log out</h3><p class="muted">Sign out on this device.</p><button class="btn ghost-dark" id="lo">Log out</button><hr style="border:0;border-top:1px solid var(--border);margin:1.5rem 0"><h3>Delete account</h3><p class="muted">This permanently removes your account and all your data from this browser.</p><button class="btn danger" id="del">Delete my account</button></div></section>
+</div>
+</main><div id="site-footer"></div>
+<script src="js/data.js"></script><script src="js/api.js"></script><script src="js/auth.js"></script><script src="js/app.js"></script><script src="js/config.js"></script><script src="js/maps.js"></script>
+<script>
+const KIND = { visit: '🏛️', food: '🍽️', shop: '🛍️', stay: '🏨', other: '📝' };
+let me = auth.current();
+if (!me) { location.replace('login.html?next=profile.html'); } else { $('#pf').hidden = false; paint(); drawTours(); }
+function paint() {
+  me = auth.current(); $('#av').textContent = me.name.trim().charAt(0).toUpperCase(); $('#pn').textContent = me.name; $('#pe').textContent = me.email;
+  $('#pc').textContent = 'Member since ' + new Date(me.created).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' });
+  $('#df').elements.name.value = me.name; $('#df').elements.phone.value = me.phone; $('#em').value = me.email; stats();
+}
+function stats() { $('#st-t').textContent = auth.data.get('tours').length; $('#st-f').textContent = auth.data.get('favs').length; }
+/* find the destination of a tour (older tours only had a name, so try to match it) */
+function tourDest(t) {
+  if (t.dest && getDest(t.dest)) return getDest(t.dest);
+  const n = (t.name || '').toLowerCase(); return destinations.find((d) => n.includes(d.name.toLowerCase().split(' ')[0])) || null;
+}
+function tourHTML(t) {
+  const d = tourDest(t), when = new Date(t.ts).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
+  const plan = (t.plan || []).map((day, i) => day.length ? `<div class="t-day"><span class="daynum">Day ${i + 1}</span><ul>${day.map((it) => `<li>${KIND[it.k] || '📝'} ${esc(it.t)}${it.c ? ` <b>${inr(it.c)}</b>` : ''}</li>`).join('')}</ul></div>` : `<div class="t-day"><span class="daynum">Day ${i + 1}</span><small class="muted"> nothing planned</small></div>`).join('');
+  const diff = t.budget ? t.budget - t.total : null;
+  return `<article class="card pad tour" id="tour-${t.id}"><div class="row between"><h3 style="margin:0">${esc(t.name)}</h3><span class="chip active">Confirmed ✓</span></div>
+    <small class="muted">Confirmed on ${when}</small>
+    <div class="tour-grid"><div>
+      <p class="t-facts">${d ? `📍 <a class="link" href="destination.html?id=${d.id}">${esc(d.name)}</a> (${esc(d.region)})<br>` : ''}👥 ${t.travellers} traveller${t.travellers > 1 ? 's' : ''} • 📅 ${t.days} day${t.days > 1 ? 's' : ''}<br>🚆 ${esc(t.mode)} • 🏨 ${esc(t.hotel)}<br>🍽️ Food ${inr(t.food)}/person/day • 🎟️ Activities ${inr(t.act)}/person/day${t.shop != null ? ` • 🛍️ Shopping ${inr(t.shop)}` : ''}</p>
+      <div class="tour-parts">${t.parts.map(([k, v]) => `<div><span>${esc(k)}</span><b>${inr(v)}</b></div>`).join('')}</div>
+      <div class="cost"><div><small>Total</small><strong>${inr(t.total)}</strong></div><div><small>Per person</small><strong>${inr(t.pp)}</strong></div>${diff !== null ? `<div><small>${diff >= 0 ? 'Under budget by' : 'Over budget by'}</small><strong class="${diff >= 0 ? 'ok' : 'bad'}">${inr(Math.abs(diff))}</strong></div>` : ''}</div>
+      ${plan ? `<h4 style="margin:.8rem 0 .3rem">Your day-wise plan</h4>${plan}` : ''}
+      ${d ? `<h4 style="margin:.8rem 0 .3rem">Good to know</h4><p class="t-facts">🌤️ Best time: ${esc(d.best)}<br>🍽️ Try: ${esc(d.food.join(', '))}<br>🛍️ Shopping: ${esc((SHOP[d.id] || []).join(', '))}<br>📝 ${esc(d.tips.join(' • '))}</p>` : ''}
+    </div>
+    <div>${d ? `<div id="map-${t.id}"></div>` : '<p class="empty">No destination was saved with this older tour, so there is no map. Make a new tour in the Trip Planner to see the map and route.</p>'}</div></div>
+    <button class="btn sm danger" data-rm="${t.id}">Cancel tour</button></article>`;
+}
+function drawTours() {
+  const list = auth.data.get('tours');
+  $('#tours').innerHTML = list.length ? list.map(tourHTML).join('')
+    : '<p class="empty">No confirmed tours yet. Plan one in the Trip Planner and press “Confirm Tour”. <a class="link" href="explore.html?tab=planner">Open Trip Planner →</a></p>';
+  list.forEach((t) => { const d = tourDest(t); if (d) KTMap.widget(document.getElementById('map-' + t.id), d, { auto: true }); });
+  stats();
+}
+function drawFavs() { const list = destinations.filter((d) => favs.includes(d.id)); $('#favs').innerHTML = list.length ? list.map(cardHTML).join('') : '<p class="empty" style="grid-column:1/-1">No favourite places yet. Tap ♡ on any destination to add it here. <a class="link" href="explore.html">Explore →</a></p>'; stats(); }
+function onFavChange() { stats(); if (!$('[data-pane="f"]').hidden) drawFavs(); }
+$$('.tabs button').forEach((b) => b.addEventListener('click', () => {
+  $$('.tabs button').forEach((x) => x.classList.toggle('active', x === b)); $$('[data-pane]').forEach((p) => { p.hidden = p.dataset.pane !== b.dataset.tab; });
+  if (b.dataset.tab === 'f') drawFavs(); if (b.dataset.tab === 't') drawTours();
+}));
+$('#tours').addEventListener('click', (e) => { const b = e.target.closest('[data-rm]'); if (b && confirm('Cancel this tour?')) { auth.data.set('tours', auth.data.get('tours').filter((t) => t.id !== b.dataset.rm)); drawTours(); toast('Tour cancelled'); } });
+$('#df').addEventListener('submit', async (e) => { e.preventDefault(); const r = await auth.updateProfile({ name: e.target.elements.name.value, phone: e.target.elements.phone.value }); $('#m1').className = 'form-msg' + (r.ok ? ' ok' : ''); $('#m1').textContent = r.ok ? 'Saved ✓' : r.error; if (r.ok) { paint(); renderLayout(); } });
+$('#sf').addEventListener('submit', async (e) => {
+  e.preventDefault(); const f = e.target.elements; const m = $('#m2'); m.className = 'form-msg';
+  if (f.nw.value !== f.cf.value) { m.textContent = 'New passwords do not match.'; return; }
+  const r = await auth.changePassword(f.old.value, f.nw.value); if (r.ok) { m.className = 'form-msg ok'; m.textContent = 'Password changed ✓'; e.target.reset(); } else m.textContent = r.error;
+});
+$('#lo').addEventListener('click', async () => { await auth.logout(); location.href = 'index.html'; });
+$('#del').addEventListener('click', async () => { if (confirm('Delete your account and all its data permanently? This cannot be undone.')) { await auth.deleteAccount(); location.href = 'index.html'; } });
+</script></body></html>

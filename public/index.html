@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Karnataka Tour – explore Hampi, Coorg, Mysuru, Gokarna and more. History, geography, language and a built-in translator.">
+<title>Home | Karnataka Tour</title><link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&family=Noto+Sans+Kannada:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="css/translator.css">
+<script>try{document.documentElement.dataset.theme=JSON.parse(localStorage.getItem('kt_theme'))||'light'}catch(e){}</script>
+</head><body><a href="#main" class="skip">Skip to content</a><noscript>Please enable JavaScript to use this site.</noscript><div id="site-header"></div><main id="main">
+<section class="hero" id="hero"><div class="container hero-in">
+  <span class="eyebrow">KARNATAKA • ONE STATE, MANY WORLDS • ಕರ್ನಾಟಕ</span>
+  <h1 data-i18n="hero_title"></h1><p data-i18n="hero_sub"></p>
+  <form class="search" id="hero-search" role="search"><span class="ico-s">🔍</span>
+    <input id="hq" aria-label="Search destinations" data-i18n-ph="search_ph"><button class="btn" type="submit" data-i18n="search"></button></form>
+  <a href="explore.html" class="btn ghost" data-i18n="explore_btn"></a><a href="#translator" class="btn gold" data-i18n="tr_title"></a>
+</div>
+<svg class="skyline" viewBox="0 0 1440 150" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+  <!-- Western Ghats -->
+  <path d="M0 150V118Q60 92 120 112T250 104Q330 76 420 112T560 100Q620 90 680 112V150Z"/><path d="M880 150V112Q960 78 1040 108T1180 98Q1260 80 1340 106T1440 100V150Z"/>
+  <!-- Gopuram (temple tower) -->
+  <rect x="90" y="112" width="100" height="38"/><rect x="100" y="90" width="80" height="22"/><rect x="108" y="72" width="64" height="18"/><rect x="116" y="56" width="48" height="16"/><rect x="124" y="42" width="32" height="14"/><rect x="132" y="30" width="16" height="12"/><rect x="138" y="14" width="4" height="16"/>
+  <!-- Mysuru-palace style domes -->
+  <rect x="560" y="96" width="320" height="54"/><path d="M690 96Q720 22 750 96Z"/><rect x="718" y="6" width="4" height="30"/>
+  <path d="M598 96Q620 48 642 96Z"/><path d="M798 96Q820 48 842 96Z"/><path d="M548 96Q562 64 576 96Z"/><path d="M864 96Q878 64 892 96Z"/>
+  <rect x="612" y="40" width="4" height="12"/><rect x="826" y="40" width="4" height="12"/>
+  <!-- Gol-Gumbaz style dome with minarets -->
+  <rect x="1130" y="86" width="190" height="64"/><path d="M1150 86Q1225 -14 1300 86Z"/><rect x="1120" y="50" width="14" height="100"/><rect x="1316" y="50" width="14" height="100"/><path d="M1118 50Q1127 34 1136 50Z"/><path d="M1314 50Q1323 34 1332 50Z"/>
+  <rect x="0" y="136" width="1440" height="14"/>
+</svg></section>
+<div class="flagbar"></div>
+<div class="container">
+  <section class="sec"><div class="sec-head"><h2 data-i18n="popular"></h2><a class="link" href="explore.html"><span data-i18n="view_all"></span> →</a></div><div class="grid" id="g-popular"></div></section>
+  <!-- ===================== FAMOUS FOOD ===================== -->
+  <section class="sec" id="food"><div class="sec-head"><div><h2>Famous Food of Karnataka</h2><p class="muted">From crisp dosas to royal sweets and coastal curries – what to eat and where to find it.</p></div></div>
+    <div class="chips" id="food-chips" role="group" aria-label="Food categories"></div><div class="grid four" id="g-food"></div></section>
+  <section class="sec"><div class="sec-head"><div><h2 data-i18n="trending"></h2><p class="muted">What travellers are exploring right now (sample data)</p></div></div><div class="grid" id="g-trending"></div></section>
+
+  <!-- ===================== TRANSLATOR ===================== -->
+  <section class="sec" id="translator-sec"><div class="sec-head"><div><h2 data-i18n="tr_title"></h2><p class="muted" data-i18n="tr_sub"></p></div></div>
+    <div class="lt" id="translator">
+      <div class="lt-banner error" id="lt-banner" role="alert" hidden>
+        <span id="lt-banner-text"></span>
+        <button type="button" class="lt-banner-close" aria-label="Close message">&times;</button>
+      </div>
+
+      <div class="lt-grid">
+        <!-- LEFT: original text -->
+        <section class="lt-card active" data-card="src" aria-label="Original text">
+          <div class="lt-head">
+            <label class="lt-label" for="lt-src-lang">From</label>
+            <select id="lt-src-lang" class="lt-select"></select>
+          </div>
+          <textarea id="lt-src-text" class="lt-text" maxlength="2000" placeholder="Type here or tap the microphone and speak…" aria-label="Original text"></textarea>
+          <div class="lt-foot">
+            <div class="lt-tools">
+              <button type="button" class="lt-icon mic" data-mic="src" aria-label="Speak (voice input)" title="Speak">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11z"/></svg>
+              </button>
+              <button type="button" class="lt-icon speaker" data-speak="src" aria-label="Listen to this text" title="Listen">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10v4h4l5 4V6L7 10H3zm13.5 2A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg>
+              </button>
+              <button type="button" class="lt-icon clear" data-clear="src" aria-label="Clear text" title="Clear">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+              </button>
+            </div>
+            <span class="lt-count" id="lt-src-count">0 / 2000</span>
+          </div>
+        </section>
+
+        <!-- MIDDLE: swap button -->
+        <div class="lt-mid">
+          <button type="button" class="lt-swap" id="lt-swap" aria-label="Swap languages and text" title="Swap">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h11l-3-3 1.4-1.4L22 8l-5.6 5.4L15 12l3-3H7V7zm10 10H6l3 3-1.4 1.4L2 16l5.6-5.4L9 12l-3 3h11v2z"/></svg>
+          </button>
+        </div>
+
+        <!-- RIGHT: translated text (can also be typed / spoken) -->
+        <section class="lt-card" data-card="tgt" aria-label="Translated text">
+          <div class="lt-head">
+            <label class="lt-label" for="lt-tgt-lang">To</label>
+            <select id="lt-tgt-lang" class="lt-select"></select>
+          </div>
+          <textarea id="lt-tgt-text" class="lt-text" maxlength="2000" placeholder="Translation appears here. You can also type or speak here…" aria-label="Translated text"></textarea>
+          <div class="lt-foot">
+            <div class="lt-tools">
+              <button type="button" class="lt-icon mic" data-mic="tgt" aria-label="Speak (voice input)" title="Speak">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11z"/></svg>
+              </button>
+              <button type="button" class="lt-icon speaker" data-speak="tgt" aria-label="Listen to this text" title="Listen">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10v4h4l5 4V6L7 10H3zm13.5 2A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg>
+              </button>
+              <button type="button" class="lt-icon clear" data-clear="tgt" aria-label="Clear text" title="Clear">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+              </button>
+            </div>
+            <span class="lt-count" id="lt-tgt-count">0 / 2000</span>
+          </div>
+        </section>
+      </div>
+
+      <div class="lt-controls">
+        <button type="button" class="lt-translate" id="lt-translate">
+          <span class="lt-spinner" aria-hidden="true"></span>
+          <span class="lt-btn-label">Translate</span>
+        </button>
+        <label class="lt-switch">
+          <input type="checkbox" id="lt-auto">
+          <span class="lt-slider" aria-hidden="true"></span>
+          <span>Speak translation automatically</span>
+        </label>
+      </div>
+      <p class="lt-direction" id="lt-direction" aria-live="polite"></p>
+    </div>
+    <p class="tr-note">Free MyMemory translation (internet needed). Voice input and speech need a browser such as Chrome or Edge. Please double-check important sentences.</p>
+  </section>
+
+  <section class="sec"><div class="sec-head"><h2 data-i18n="blog"></h2><a class="link" href="blog.html"><span data-i18n="view_all"></span> →</a></div><div class="grid" id="g-blog"></div></section>
+  <section class="sec news"><h2 data-i18n="newsletter"></h2>
+    <form id="news"><input type="email" required aria-label="Email" data-i18n-ph="email"><button class="btn" type="submit" data-i18n="subscribe"></button></form></section>
+
+  <!-- ===================== CONTACT (no separate contact.html) ===================== -->
+  <section class="sec" id="contact"><div class="sec-head"><h2>Contact Us</h2></div><div class="two">
+    <form class="card pad form" id="cf"><label>Name<input required maxlength="60"></label><label>Email<input required type="email"></label><label>Message<textarea required rows="5" maxlength="1000"></textarea></label><button class="btn" type="submit">Send message</button></form>
+    <div class="card pad side"><p>✉️ hello@karnatakatour.example</p><p>📞 +91 00000 00000 (placeholder)</p><p>📍 Bengaluru, Karnataka, India</p><p class="muted">Contact details are placeholders for this demo.</p></div></div></section>
+</div>
+</main><div id="site-footer"></div>
+<script src="js/data.js"></script><script src="js/api.js"></script><script src="js/auth.js"></script><script src="js/app.js"></script><script src="js/translator.js"></script>
+<script>
+$('#hero').style.backgroundImage = `linear-gradient(180deg, rgba(9,0,0,.2), rgba(5,0,0,.5)), url(images/backgrounds/hero.jpg)`;
+$('#hero-search').addEventListener('submit', (e) => { e.preventDefault(); location.href = 'explore.html?q=' + encodeURIComponent($('#hq').value); });
+const fill = (id, list) => { $('#' + id).innerHTML = list.map(cardHTML).join(''); };
+fill('g-popular', [...destinations].sort((a, b) => b.rating - a.rating).slice(0, 6));
+fill('g-trending', destinations.filter((d) => d.trending).slice(0, 4));
+/* Famous food: category chips + cards */
+const foodCats = ['All', ...new Set(FOODS.map((f) => f.cat))]; let foodCat = 'All';
+function drawFood() {
+  $('#food-chips').innerHTML = foodCats.map((c) => `<button type="button" class="chip${c === foodCat ? ' active' : ''}" data-c="${c}" aria-pressed="${c === foodCat}">${c}</button>`).join('');
+  $('#g-food').innerHTML = FOODS.filter((f) => foodCat === 'All' || f.cat === foodCat).map((f, i) => `<article class="card food"><div class="food-top"><span class="food-emoji" aria-hidden="true">${f.emoji}</span><img loading="lazy" src="${f.img}" alt="${f.name}" onerror="this.remove()"><span class="veg ${f.veg ? 'v' : 'nv'}" title="${f.veg ? 'Vegetarian' : 'Non-vegetarian'}"></span></div>
+    <div class="card-body"><h3>${f.name}</h3><small class="muted">${f.cat}</small><p>${f.desc}</p><p class="loc">📍 ${f.place}</p>${f.dest ? `<a class="link" href="destination.html?id=${f.dest}">Visit ${getDest(f.dest).name} →</a>` : ''}</div></article>`).join('');
+}
+$('#food-chips').addEventListener('click', (e) => { const b = e.target.closest('.chip'); if (b) { foodCat = b.dataset.c; drawFood(); } });
+drawFood();
+const tile = (href, img, title, sub, wide) => `<a href="${href}" class="tile${wide ? ' wide' : ''}"><img loading="lazy" src="${img}" alt="${title}" onerror="fb(this)"><div><h3>${title}</h3><small>${sub}</small></div></a>`;
+$('#g-blog').innerHTML = allBlogs().slice(0, 3).map((b) => `<a href="blog.html?slug=${b.slug}" class="card blog"><img loading="lazy" src="${blogImg(b, 700, 420, 9)}" alt="${esc(b.title)}" onerror="fb(this)"><div class="card-body"><span class="chip">${b.category}</span><h3>${esc(b.title)}</h3><p class="clamp">${esc(b.excerpt)}</p></div></a>`).join('');
+$('#cf').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const [name, email, message] = [...e.target.querySelectorAll('input,textarea')].map((x) => x.value.trim());
+  const r = await api.post('/api/contact', { name, email, message });
+  if (!r.ok) return toast(r.error);
+  e.target.reset(); toast('Message sent ✓ – we will get back to you soon');
+});
+$('#news').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const r = await api.post('/api/newsletter', { email: e.target.querySelector('input').value.trim() });
+  if (!r.ok) return toast(r.error);
+  e.target.reset(); toast('Subscribed ✓ – thank you!');
+});
+</script></body></html>

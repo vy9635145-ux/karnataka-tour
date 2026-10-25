@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Translate text between many languages. Type or speak, and listen to the result.">
+  <title>Language Translator with Voice</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="lt-page">
+  <div class="lt-page-wrap">
+    <header class="lt-hero">
+      <h1>Language Translator with Voice</h1>
+      <p>Type or speak in either box, translate, and listen to the result.</p>
+    </header>
+
+<div class="lt" id="translator">
+  <div class="lt-banner error" id="lt-banner" role="alert" hidden>
+    <span id="lt-banner-text"></span>
+    <button type="button" class="lt-banner-close" aria-label="Close message">&times;</button>
+  </div>
+
+  <div class="lt-grid">
+    <!-- LEFT: original text -->
+    <section class="lt-card active" data-card="src" aria-label="Original text">
+      <div class="lt-head">
+        <label class="lt-label" for="lt-src-lang">From</label>
+        <select id="lt-src-lang" class="lt-select"></select>
+      </div>
+      <textarea id="lt-src-text" class="lt-text" maxlength="2000" placeholder="Type here or tap the microphone and speak…" aria-label="Original text"></textarea>
+      <div class="lt-foot">
+        <div class="lt-tools">
+          <button type="button" class="lt-icon mic" data-mic="src" aria-label="Speak (voice input)" title="Speak">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11z"/></svg>
+          </button>
+          <button type="button" class="lt-icon speaker" data-speak="src" aria-label="Listen to this text" title="Listen">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10v4h4l5 4V6L7 10H3zm13.5 2A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg>
+          </button>
+          <button type="button" class="lt-icon clear" data-clear="src" aria-label="Clear text" title="Clear">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+          </button>
+        </div>
+        <span class="lt-count" id="lt-src-count">0 / 2000</span>
+      </div>
+    </section>
+
+    <!-- MIDDLE: swap button -->
+    <div class="lt-mid">
+      <button type="button" class="lt-swap" id="lt-swap" aria-label="Swap languages and text" title="Swap">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h11l-3-3 1.4-1.4L22 8l-5.6 5.4L15 12l3-3H7V7zm10 10H6l3 3-1.4 1.4L2 16l5.6-5.4L9 12l-3 3h11v2z"/></svg>
+      </button>
+    </div>
+
+    <!-- RIGHT: translated text (can also be typed / spoken) -->
+    <section class="lt-card" data-card="tgt" aria-label="Translated text">
+      <div class="lt-head">
+        <label class="lt-label" for="lt-tgt-lang">To</label>
+        <select id="lt-tgt-lang" class="lt-select"></select>
+      </div>
+      <textarea id="lt-tgt-text" class="lt-text" maxlength="2000" placeholder="Translation appears here. You can also type or speak here…" aria-label="Translated text"></textarea>
+      <div class="lt-foot">
+        <div class="lt-tools">
+          <button type="button" class="lt-icon mic" data-mic="tgt" aria-label="Speak (voice input)" title="Speak">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11z"/></svg>
+          </button>
+          <button type="button" class="lt-icon speaker" data-speak="tgt" aria-label="Listen to this text" title="Listen">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10v4h4l5 4V6L7 10H3zm13.5 2A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg>
+          </button>
+          <button type="button" class="lt-icon clear" data-clear="tgt" aria-label="Clear text" title="Clear">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+          </button>
+        </div>
+        <span class="lt-count" id="lt-tgt-count">0 / 2000</span>
+      </div>
+    </section>
+  </div>
+
+  <div class="lt-controls">
+    <button type="button" class="lt-translate" id="lt-translate">
+      <span class="lt-spinner" aria-hidden="true"></span>
+      <span class="lt-btn-label">Translate</span>
+    </button>
+    <label class="lt-switch">
+      <input type="checkbox" id="lt-auto">
+      <span class="lt-slider" aria-hidden="true"></span>
+      <span>Speak translation automatically</span>
+    </label>
+  </div>
+  <p class="lt-direction" id="lt-direction" aria-live="polite"></p>
+</div>
+
+    <p class="lt-footer">Translations by the free MyMemory service &bull; Voice by your browser (Chrome / Edge work best)</p>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

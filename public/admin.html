@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Admin | Karnataka Tour</title><link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/style.css">
+<script>try{document.documentElement.dataset.theme=JSON.parse(localStorage.getItem('kt_theme'))||'light'}catch(e){}</script>
+<style>
+  .adm-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin:16px 0}
+  .adm-stats .card{text-align:center}.adm-stats b{display:block;font-size:1.8rem}
+  .adm-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+  .adm-wrap{overflow-x:auto}table.adm{width:100%;border-collapse:collapse;font-size:.92rem}
+  table.adm th,table.adm td{padding:8px 10px;border-bottom:1px solid var(--border,#ddd);text-align:left;vertical-align:top}
+  .msg-body{white-space:pre-wrap;max-width:480px}
+</style>
+</head><body><a href="#main" class="skip">Skip to content</a><div id="site-header"></div><main id="main">
+<div class="container page" id="gate"><h1>Admin</h1><p class="muted" id="gate-msg">Checking access…</p></div>
+<div class="container page" id="panel" hidden>
+  <h1>Admin dashboard</h1>
+  <div class="adm-stats" id="stats"></div>
+  <div class="adm-tabs" id="tabs">
+    <button class="chip active" data-t="messages">Contact messages</button>
+    <button class="chip" data-t="subscribers">Newsletter subscribers</button>
+    <button class="chip" data-t="users">Users</button>
+  </div>
+  <div class="card pad adm-wrap" id="view"></div>
+</div>
+</main><div id="site-footer"></div>
+<script src="js/data.js"></script><script src="js/api.js"></script><script src="js/auth.js"></script><script src="js/app.js"></script>
+<script>
+const me = auth.current();
+const esc2 = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+if (!me) { $('#gate-msg').innerHTML = 'Please <a class="link" href="login.html?next=admin.html">log in</a> with an admin account.'; }
+else if (!me.isAdmin) { $('#gate-msg').textContent = 'This account is not an admin. Add the e-mail to ADMIN_EMAILS in .env (or run npm run make-admin) and log in again.'; }
+else { $('#gate').hidden = true; $('#panel').hidden = false; start(); }
+
+let tab = 'messages';
+async function start() {
+  const s = await api.get('/api/admin/stats');
+  if (s.ok) $('#stats').innerHTML = Object.entries(s.stats).map(([k, v]) => `<div class="card pad"><b>${v}</b><small class="muted">${esc2(k.replace(/([A-Z])/g, ' $1'))}</small></div>`).join('');
+  show();
+}
+async function show() {
+  $$('#tabs .chip').forEach((b) => b.classList.toggle('active', b.dataset.t === tab));
+  const v = $('#view'); v.innerHTML = 'Loading…';
+  if (tab === 'messages') {
+    const r = await api.get('/api/admin/messages'); if (!r.ok) { v.textContent = r.error; return; }
+    v.innerHTML = r.messages.length ? `<table class="adm"><tr><th>When</th><th>From</th><th>Message</th><th></th></tr>${r.messages.map((m) => `<tr><td>${esc2(m.created_at.slice(0, 16).replace('T', ' '))}</td><td>${esc2(m.name)}<br><a class="link" href="mailto:${esc2(m.email)}">${esc2(m.email)}</a></td><td class="msg-body">${esc2(m.message)}</td><td><button class="btn sm" data-h="${m.id}" data-v="${m.handled ? 0 : 1}">${m.handled ? 'Reopen' : 'Mark done'}</button> <button class="btn sm danger" data-d="${m.id}">Delete</button></td></tr>`).join('')}</table>` : '<p class="empty">No messages yet.</p>';
+  } else if (tab === 'subscribers') {
+    const r = await api.get('/api/admin/subscribers'); if (!r.ok) { v.textContent = r.error; return; }
+    v.innerHTML = r.subscribers.length ? `<table class="adm"><tr><th>E-mail</th><th>Subscribed</th></tr>${r.subscribers.map((x) => `<tr><td>${esc2(x.email)}</td><td>${esc2(x.created_at.slice(0, 10))}</td></tr>`).join('')}</table>` : '<p class="empty">No subscribers yet.</p>';
+  } else {
+    const r = await api.get('/api/admin/users'); if (!r.ok) { v.textContent = r.error; return; }
+    v.innerHTML = `<table class="adm"><tr><th>Name</th><th>E-mail</th><th>Phone</th><th>Joined</th><th>Role</th></tr>${r.users.map((u) => `<tr><td>${esc2(u.name)}</td><td>${esc2(u.email)}</td><td>${esc2(u.phone)}</td><td>${esc2(u.created_at.slice(0, 10))}</td><td>${u.is_admin ? 'admin' : 'user'}</td></tr>`).join('')}</table>`;
+  }
+}
+$('#tabs').addEventListener('click', (e) => { const b = e.target.closest('.chip'); if (b) { tab = b.dataset.t; show(); } });
+$('#view').addEventListener('click', async (e) => {
+  const h = e.target.closest('[data-h]'), d = e.target.closest('[data-d]');
+  if (h) { await api.patch('/api/admin/messages/' + h.dataset.h, { handled: h.dataset.v === '1' }); start(); }
+  if (d && confirm('Delete this message?')) { await api.del('/api/admin/messages/' + d.dataset.d); start(); }
+});
+</script></body></html>

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Sign up | Karnataka Tour</title><link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&family=Noto+Sans+Kannada:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script>try{document.documentElement.dataset.theme=JSON.parse(localStorage.getItem("kt_theme"))||"light"}catch(e){}</script>
+</head><body><a href="#main" class="skip">Skip to content</a><noscript>Please enable JavaScript to use this site.</noscript><div id="site-header"></div><main id="main">
+<div class="auth">
+  <aside class="auth-side"><h2>ಸ್ವಾಗತ! Welcome to Karnataka</h2><p>Create a free account to:</p>
+    <ul><li>Keep your saved destinations in one place</li><li>Plan trips and budgets faster</li><li>Share your travel stories on the blog</li></ul><p style="opacity:.85">Namaskara 🙏</p></aside>
+  <div class="auth-main"><div class="card pad auth-card">
+    <h1>Create account</h1><p class="muted">Already registered? <a class="link" href="login.html">Log in</a></p>
+    <form class="form" id="su" novalidate>
+      <label>Full name<input name="name" autocomplete="name" required maxlength="60"></label>
+      <label>Email<input name="email" type="email" autocomplete="email" required></label>
+      <label>Phone <span class="hint">(optional)</span><input name="phone" type="tel" autocomplete="tel" placeholder="+91 98765 43210"></label>
+      <label>Password<span class="pw"><input name="password" id="pw" type="password" autocomplete="new-password" required minlength="8"><button type="button" class="eye" aria-label="Show password">👁️</button></span>
+        <span class="meter" aria-hidden="true"><i id="meter"></i></span><span class="hint" id="meter-txt">At least 8 characters with a letter and a number.</span></label>
+      <label>Confirm password<span class="pw"><input name="confirm" id="pw2" type="password" autocomplete="new-password" required></span></label>
+      <label class="check"><input type="checkbox" name="terms" id="terms"> <span>I agree to the Terms &amp; Privacy Policy (demo).</span></label>
+      <p class="form-msg" id="msg" role="alert"></p>
+      <button class="btn block" type="submit" id="go">Sign up</button>
+    </form>
+    <p class="hint">Demo only: your account is stored in this browser (localStorage), not on a server.</p>
+  </div></div></div>
+</main><div id="site-footer"></div>
+<script src="js/data.js"></script><script src="js/api.js"></script><script src="js/auth.js"></script><script src="js/app.js"></script>
+<script>
+const next = new URLSearchParams(location.search).get('next');
+const safeNext = /^[a-z0-9\-]+\.html(\?[\w=&%\-]*)?$/i.test(next || '') ? next : 'profile.html';
+if (auth.current()) location.replace(safeNext);
+const msg = (m) => { $('#msg').textContent = m || ''; };
+$$('.eye').forEach((b) => b.addEventListener('click', () => { const i = b.previousElementSibling; i.type = i.type === 'password' ? 'text' : 'password'; }));
+$('#pw').addEventListener('input', (e) => {
+  const s = auth.strength(e.target.value), c = ['#dc2626', '#ea580c', '#f2b705', '#65a30d', '#16a34a'], l = ['Too weak', 'Weak', 'Okay', 'Good', 'Strong'];
+  $('#meter').style.width = (e.target.value ? (s + 1) * 20 : 0) + '%'; $('#meter').style.background = c[s]; $('#meter-txt').textContent = e.target.value ? l[s] : 'At least 8 characters with a letter and a number.';
+});
+$('#su').addEventListener('submit', async (e) => {
+  e.preventDefault(); msg('');
+  const f = e.target, d = Object.fromEntries(new FormData(f));
+  if (d.password !== d.confirm) return msg('Passwords do not match.');
+  if (!$('#terms').checked) return msg('Please accept the Terms & Privacy Policy.');
+  $('#go').disabled = true;
+  const r = await auth.signup(d); $('#go').disabled = false;
+  if (!r.ok) return msg(r.error);
+  toast('Welcome, ' + r.user.name.split(' ')[0] + '! 🎉'); setTimeout(() => { location.href = safeNext; }, 700);
+});
+</script></body></html>
