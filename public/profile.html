@@ -47,7 +47,7 @@ function tourHTML(t) {
       ${d ? `<h4 style="margin:.8rem 0 .3rem">Good to know</h4><p class="t-facts">🌤️ Best time: ${esc(d.best)}<br>🍽️ Try: ${esc(d.food.join(', '))}<br>🛍️ Shopping: ${esc((SHOP[d.id] || []).join(', '))}<br>📝 ${esc(d.tips.join(' • '))}</p>` : ''}
     </div>
     <div>${d ? `<div id="map-${t.id}"></div>` : '<p class="empty">No destination was saved with this older tour, so there is no map. Make a new tour in the Trip Planner to see the map and route.</p>'}</div></div>
-    <button class="btn sm danger" data-rm="${t.id}">Cancel tour</button></article>`;
+    <a class="btn sm ghost-dark" href="packing.html?tour=${t.id}">🎒 Packing list</a> <button class="btn sm danger" data-rm="${t.id}">Cancel tour</button></article>`;
 }
 function drawTours() {
   const list = auth.data.get('tours');

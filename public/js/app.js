@@ -32,7 +32,7 @@ function toast(msg) {
 }
 
 /* ---------- header / footer ---------- */
-const NAV = [['index.html', 'nav_home'], ['explore.html', 'nav_explore'], ['blog.html', 'nav_blog'], ['about.html', 'nav_about'], ['index.html#contact', 'nav_contact']];
+const NAV = [['index.html', 'nav_home'], ['explore.html', 'nav_explore'], ['packing.html', 'packing'], ['blog.html', 'nav_blog'], ['about.html', 'nav_about'],];
 const ALIAS = { 'destination.html': 'explore.html', '': 'index.html' };
 const here = location.pathname.split('/').pop();
 const activePage = ALIAS[here] || here;
@@ -79,7 +79,7 @@ function renderLayout() {
   if (f) {
     f.innerHTML = `<footer class="footer"><div class="container foot-grid">
       <div><div class="logo">${LOGO}</div><p data-i18n="footer_tag"></p></div>
-      <div><h4>Explore</h4><a href="explore.html">Destinations</a><a href="explore.html?tab=planner">Trip Planner</a><a href="explore.html?tab=budget">Budget Calculator</a></div>
+      <div><h4>Explore</h4><a href="explore.html">Destinations</a><a href="explore.html?tab=planner">Trip Planner</a><a href="explore.html?tab=budget">Budget Calculator</a><a href="packing.html">Packing Assistant</a></div>
       <div><h4>Read</h4><a href="blog.html">Travel Blog</a><a href="about.html">About</a><a href="index.html#contact">Contact</a><a href="login.html">Login</a><a href="signup.html">Sign up</a></div>
       <div><h4>Note</h4><p>Prices, ratings and weather shown on the site are sample data.</p></div></div>
       <div class="container copy">© ${new Date().getFullYear()} Karnataka Tour – demo project. ಕರ್ನಾಟಕ ಪ್ರವಾಸ</div></footer>`;

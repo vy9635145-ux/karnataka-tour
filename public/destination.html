@@ -47,7 +47,7 @@ if (!d) {
       <p>📅 <b>Best time:</b> ${d.best}</p><p>🚆 <b>How to reach:</b> ${d.reach}</p>
       <p>💰 <b>Est. budget:</b> ${inr(d.cost)} per person/day <small class="muted">(sample)</small></p>
       <p>☁️ <b>Typical weather:</b> ${weather} <small class="muted">(sample)</small></p>
-      <a class="btn block" href="explore.html?tab=planner&d=${d.id}">${t('plan_trip')}</a><a class="btn ghost-dark block" href="explore.html?tab=budget">Budget Calculator</a></div>
+      <a class="btn block" href="explore.html?tab=planner&d=${d.id}">${t('plan_trip')}</a><a class="btn ghost-dark block" href="explore.html?tab=budget">Budget Calculator</a><a class="btn ghost-dark block" href="packing.html?dest=${d.id}">🎒 Packing List</a></div>
     <div class="card pad side"><h3>Nearby Places</h3>${nearby.map((n) => `<a class="mini" href="destination.html?id=${n.id}"><img src="images/places/${n.id}.jpg" alt="" onerror="fb(this)"><span>${n.name}</span></a>`).join('')}</div>
   </aside></div>
   <div class="container sec"><h2>${t('related')}</h2><div class="grid">${related.map(cardHTML).join('')}</div></div>`;

@@ -10,7 +10,7 @@ const { serveStatic } = require('./lib/static');
 const sessions = require('./lib/session');
 const createMailer = require('./lib/mailer');
 
-const ROUTE_FILES = ['auth', 'me', 'reviews', 'posts', 'forms', 'public', 'admin'];
+const ROUTE_FILES = ['auth', 'me', 'packing', 'reviews', 'posts', 'forms', 'public', 'admin'];
 const UNSAFE = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
 
 function createApp(overrides = {}) {

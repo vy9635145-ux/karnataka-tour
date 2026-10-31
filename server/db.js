@@ -80,10 +80,25 @@ const MIGRATIONS = [
     handled    INTEGER NOT NULL DEFAULT 0,
     created_at TEXT NOT NULL
   );
-  CREATE TABLE subscribers (
+    CREATE TABLE subscribers (
     email      TEXT PRIMARY KEY COLLATE NOCASE,
     created_at TEXT NOT NULL
   );
+  `,                                   // <-- comma add karo
+  /* 2: Smart Packing Assistant */
+  `
+  CREATE TABLE packing_lists (
+    user_id    TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    id         TEXT NOT NULL,
+    name       TEXT NOT NULL,
+    dest_id    TEXT NOT NULL,
+    tour_id    TEXT,
+    data       TEXT NOT NULL,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    PRIMARY KEY (user_id, id)
+  );
+  CREATE INDEX idx_packing_user ON packing_lists(user_id, updated_at);
   `
 ];
 
