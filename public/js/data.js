@@ -154,7 +154,7 @@ const getBlog = (slug) => blogs.find((b) => b.slug === slug);
 // Basic local translations (main nav, buttons, headings). Falls back to English.
 const translations = {
   en: {
-    nav_home: 'Home', nav_explore: 'Explore', nav_planner: 'Trip Planner', nav_budget: 'Budget',
+   nav_home: 'Home', nav_personality: 'Travel Personality', nav_packing: 'Packing List', nav_explore: 'Explore', nav_planner: 'Trip Planner', nav_budget: 'Budget',
     nav_blog: 'Blog', nav_about: 'About', nav_contact: 'Contact',
     hero_title: 'Discover the Many Worlds of Karnataka',
     hero_sub: 'Ancient ruins, misty hills, golden beaches and royal palaces – all in one state.',
@@ -174,6 +174,7 @@ const translations = {
   },
   hi: {
     nav_home: 'होम', nav_explore: 'खोजें', nav_planner: 'यात्रा योजना', nav_budget: 'बजट',
+    nav_home: 'होम', nav_personality: 'यात्रा व्यक्तित्व', nav_packing: 'पैकिंग सूची',
     nav_blog: 'ब्लॉग', nav_about: 'हमारे बारे में', nav_contact: 'संपर्क',
     hero_title: 'कर्नाटक की अनेक दुनियाओं को जानें',
     hero_sub: 'प्राचीन खंडहर, धुंध भरी पहाड़ियाँ, सुनहरे समुद्र तट और शाही महल – सब एक ही राज्य में।',
@@ -193,6 +194,7 @@ const translations = {
   },
   kn: {
     nav_home: 'ಮುಖಪುಟ', nav_explore: 'ಅನ್ವೇಷಿಸಿ', nav_planner: 'ಪ್ರವಾಸ ಯೋಜನೆ', nav_budget: 'ಬಜೆಟ್',
+    nav_home: 'ಮುಖಪುಟ', nav_personality: 'ಪ್ರವಾಸ ವ್ಯಕ್ತಿತ್ವ', nav_packing: 'ಪ್ಯಾಕಿಂಗ್ ಪಟ್ಟಿ',
     nav_blog: 'ಬ್ಲಾಗ್', nav_about: 'ನಮ್ಮ ಬಗ್ಗೆ', nav_contact: 'ಸಂಪರ್ಕ',
     hero_title: 'ಕರ್ನಾಟಕದ ಹಲವು ಲೋಕಗಳನ್ನು ಅನ್ವೇಷಿಸಿ',
     hero_sub: 'ಪ್ರಾಚೀನ ಅವಶೇಷಗಳು, ಮಂಜಿನ ಬೆಟ್ಟಗಳು, ಚಿನ್ನದ ಕಡಲತೀರಗಳು ಮತ್ತು ರಾಜ ಅರಮನೆಗಳು – ಒಂದೇ ರಾಜ್ಯದಲ್ಲಿ.',

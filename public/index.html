@@ -114,8 +114,6 @@
   </section>
 
   <section class="sec"><div class="sec-head"><h2 data-i18n="blog"></h2><a class="link" href="blog.html"><span data-i18n="view_all"></span> →</a></div><div class="grid" id="g-blog"></div></section>
-  <section class="sec news"><h2 data-i18n="newsletter"></h2>
-    <form id="news"><input type="email" required aria-label="Email" data-i18n-ph="email"><button class="btn" type="submit" data-i18n="subscribe"></button></form></section>
 
   <!-- ===================== CONTACT (no separate contact.html) ===================== -->
   <section class="sec" id="contact"><div class="sec-head"><h2>Contact Us</h2></div><div class="two">
@@ -147,11 +145,5 @@ $('#cf').addEventListener('submit', async (e) => {
   const r = await api.post('/api/contact', { name, email, message });
   if (!r.ok) return toast(r.error);
   e.target.reset(); toast('Message sent ✓ – we will get back to you soon');
-});
-$('#news').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const r = await api.post('/api/newsletter', { email: e.target.querySelector('input').value.trim() });
-  if (!r.ok) return toast(r.error);
-  e.target.reset(); toast('Subscribed ✓ – thank you!');
 });
 </script></body></html>

@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Take the Karnataka travel personality quiz and get destinations that match your travel style.">
+<title>Travel Personality Matcher | Karnataka Tour</title><link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&family=Noto+Sans+Kannada:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="css/discover.css">
+<script>try{document.documentElement.dataset.theme=JSON.parse(localStorage.getItem('kt_theme'))||'light'}catch(e){}</script>
+</head><body><a href="#main" class="skip">Skip to content</a><noscript>Please enable JavaScript to use this site.</noscript><div id="site-header"></div><main id="main">
+<div class="flagbar"></div>
+<div class="container page">
+  <h1>🧭 Travel Personality Matcher</h1>
+  <p class="muted lead">Nine quick questions – no login needed.</p>
+
+  <section class="qz" id="quiz" aria-label="Travel personality quiz">
+    <div class="qz-meta"><span id="qz-step"></span><span id="qz-pct"></span></div>
+    <div class="qz-track" role="progressbar" aria-label="Quiz progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="qz-bar"><i id="qz-fill"></i></div>
+    <form class="card qz-card" id="qz-form" novalidate></form>
+  </section>
+
+  <section id="result" hidden aria-live="polite">
+    <article class="card rs-hero"><div class="rs-badge" id="rs-emoji" aria-hidden="true"></div>
+      <div><p class="eyebrow" style="margin:0">YOUR TRAVEL PERSONALITY</p><h2 id="rs-name"></h2><p id="rs-desc" class="lead" style="margin:.2rem 0"></p><p id="rs-second" class="muted"></p></div></article>
+    <div class="rs-note" id="rs-tie" hidden></div>
+    <div class="rs-grid">
+      <div class="card"><h3>Favourite environments</h3><ul class="ticks" id="rs-env"></ul></div>
+      <div class="card"><h3>Recommended activities</h3><ul class="ticks" id="rs-act"></ul></div>
+      <div class="card"><h3>How your score was calculated</h3><div class="rs-bars" id="rs-bars"></div></div>
+    </div>
+    <div class="rs-actions">
+      <button class="btn" type="button" id="rs-explore">Explore recommended destinations</button>
+      <button class="btn ghost-dark" type="button" id="rs-save">💾 Save result</button>
+      <button class="btn ghost-dark" type="button" id="rs-retake">↺ Retake the quiz</button>
+    </div>
+    <p class="form-msg" id="rs-msg" role="status"></p>
+    <section class="sec" id="recs"><h2>Recommended for Your Travel Personality</h2><p class="rs-note" id="rs-empty" hidden></p><div class="grid" id="rs-recs"></div></section>
+    <section class="sec" id="diff"><h2>Explore Something Different</h2><p class="muted">Places outside your usual style – a nudge to discover something new.</p><div class="grid" id="rs-diff"></div></section>
+  </section>
+</div>
+</main><div id="site-footer"></div>
+<script src="js/data.js"></script><script src="js/api.js"></script><script src="js/auth.js"></script><script src="js/app.js"></script><script src="js/discover-engine.js"></script>
+<script>
+const E = DiscoverEngine, QS = E.QUESTIONS;
+const KT_ANS = 'kt_discover_answers';
+const lastAnswers = () => { try { const a = JSON.parse(localStorage.getItem(KT_ANS)); return a && !E.validate(a) ? a : null; } catch (e) { return null; } };
+const rememberAnswers = (a) => { try { localStorage.setItem(KT_ANS, JSON.stringify(a)); } catch (e) { /* private mode */ } };
+const withWhy = (x) => `<div>${cardHTML(x.place)}${x.reasons.length ? `<p class="why">${esc(x.reasons[0])}</p>` : ''}</div>`;
+let step = 0, answers = {}, last = null;
+const form = $('#qz-form');
+
+function drawStep() {
+  const q = QS[step], multi = q.type === 'multi', cur = answers[q.id];
+  const sel = (id) => (multi ? (cur || []).includes(id) : cur === id);
+  form.innerHTML = `<fieldset class="qz-fs"><legend>${esc(q.text)}</legend>${multi ? `<p class="muted" style="margin-top:-.6rem">Choose up to ${q.max}.</p>` : ''}
+    <div class="qz-opts">${q.options.map((o) => `<label class="qz-opt"><input type="${multi ? 'checkbox' : 'radio'}" name="${q.id}" value="${o.id}"${sel(o.id) ? ' checked' : ''}> <span>${esc(o.label)}</span></label>`).join('')}</div></fieldset>
+    <p class="qz-msg" id="qz-msg" role="alert"></p>
+    <div class="qz-nav"><button type="button" class="btn ghost-dark" id="qz-back"${step ? '' : ' disabled'}>← Back</button>
+    <button type="submit" class="btn" id="qz-next">${step === QS.length - 1 ? 'See my result ✨' : 'Next →'}</button></div>`;
+  const pct = Math.round(step / QS.length * 100);
+  $('#qz-step').textContent = `Question ${step + 1} of ${QS.length}`; $('#qz-pct').textContent = pct + '%';
+  $('#qz-fill').style.width = pct + '%'; $('#qz-bar').setAttribute('aria-valuenow', pct);
+  const first = $('input', form); if (first) first.focus({ preventScroll: true });
+}
+form.addEventListener('change', (e) => {
+  const q = QS[step], inp = e.target; if (!inp.name) return;
+  if (q.type === 'multi') {
+    const picked = $$('input:checked', form).map((x) => x.value);
+    if (picked.length > q.max) { inp.checked = false; $('#qz-msg').textContent = `You can choose up to ${q.max}.`; return; }
+    answers[q.id] = picked;
+  } else answers[q.id] = inp.value;
+  $('#qz-msg').textContent = '';
+});
+form.addEventListener('click', (e) => { if (e.target.id === 'qz-back' && step > 0) { step--; drawStep(); } });
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const q = QS[step], a = answers[q.id];
+  if (!a || (Array.isArray(a) && !a.length)) { $('#qz-msg').textContent = 'Please choose an answer to continue.'; return; }
+  if (step < QS.length - 1) { step++; drawStep(); } else finish();
+});
+
+function finish() {
+  const err = E.validate(answers); if (err) { $('#qz-msg').textContent = err; return; }
+  last = E.score(answers); rememberAnswers(answers);
+  showResult();
+}
+function showResult() {
+  const P = E.PERSONALITIES, r = last, p = P[r.primary];
+  $('#quiz').hidden = true; $('#result').hidden = false;
+  $('#rs-emoji').textContent = p.emoji; $('#rs-name').textContent = p.name; $('#rs-desc').textContent = p.desc;
+  $('#rs-second').textContent = r.secondary ? `Your secondary style: ${P[r.secondary].emoji} ${P[r.secondary].name} – ${P[r.secondary].short}` : '';
+  const tie = $('#rs-tie'); tie.hidden = !r.tieBroken;
+  if (r.tieBroken) tie.textContent = `Your top two styles scored equally. ${p.name} was chosen because it matched your answers about favourite places and activities most strongly.`;
+  $('#rs-env').innerHTML = p.environments.map((x) => `<li>${esc(x)}</li>`).join('');
+  $('#rs-act').innerHTML = p.activities.map((x) => `<li>${esc(x)}</li>`).join('');
+  const max = Math.max(1, ...Object.values(r.scores));
+  $('#rs-bars').innerHTML = r.ranked.map((k) => `<div class="rs-bar"><span>${P[k].emoji} ${esc(P[k].name)}</span><span><i style="width:${r.scores[k] / max * 100}%"></i></span><b>${r.scores[k]}</b></div>`).join('');
+  const rec = E.recommend(destinations, r);
+  $('#rs-recs').innerHTML = rec.recommended.map(withWhy).join('');
+  const em = $('#rs-empty'); em.hidden = !rec.message; em.textContent = rec.message;
+  $('#diff').hidden = !rec.different.length;
+  $('#rs-diff').innerHTML = rec.different.map(withWhy).join('');
+  $('#rs-msg').textContent = ''; $('#rs-msg').className = 'form-msg';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+$('#rs-explore').addEventListener('click', () => $('#recs').scrollIntoView({ behavior: 'smooth' }));
+$('#rs-retake').addEventListener('click', () => { answers = {}; step = 0; last = null; $('#result').hidden = true; $('#quiz').hidden = false; drawStep(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+$('#rs-save').addEventListener('click', async () => {
+  const msg = $('#rs-msg'), btn = $('#rs-save');
+  if (!auth.current()) { msg.className = 'form-msg'; msg.innerHTML = 'Result kept in this browser. <a class="link" href="login.html?next=' + encodeURIComponent('personality.html?result=1') + '">Log in</a> to save it to your account.'; return; }
+  btn.disabled = true; btn.textContent = 'Saving…';
+  const r = await api.post('/api/me/personality', { answers });
+  btn.disabled = false; btn.textContent = '💾 Save result';
+  msg.className = r.ok ? 'form-msg ok' : 'form-msg'; msg.textContent = r.ok ? 'Saved to your account ✓' : r.error;
+});
+/* open straight on the result when the person already took the quiz (?result=1) */
+const saved = lastAnswers();
+if (new URLSearchParams(location.search).get('result') && saved) { answers = saved; last = E.score(saved); showResult(); } else drawStep();
+</script></body></html>

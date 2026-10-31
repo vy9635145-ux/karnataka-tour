@@ -14,13 +14,13 @@ a{color:inherit;text-decoration:none}img{max-width:100%;display:block}
 .nav{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--surface) 90%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
 .nav-in{display:flex;align-items:center;justify-content:space-between;height:68px;gap:1rem}
 .logo{display:flex;align-items:center;gap:.5rem;font-family:'Playfair Display',serif;font-weight:700;font-size:1.3rem;color:var(--primary)}.logo b{color:var(--accent)}
-.links{display:flex;gap:1.2rem}.links a{font-weight:500;padding:.3rem 0;border-bottom:2px solid transparent}
+.links{display:flex;gap:1.2rem}.links a{font-weight:500;padding:.3rem 0;border-bottom:2px solid transparent;white-space:nowrap}
 .links a:hover,.links a.active{color:var(--primary);border-color:var(--primary)}
 .nav-tools{display:flex;gap:.5rem;align-items:center}
 .icon-btn{border:1px solid var(--border);background:var(--surface);color:var(--text);width:38px;height:38px;border-radius:50%;display:grid;place-items:center;cursor:pointer}
 .lang{display:flex;align-items:center;gap:.3rem;border:1px solid var(--border);border-radius:99px;padding:0 .6rem;height:38px;background:var(--surface)}
 .lang select{border:0;background:transparent;color:var(--text);font:inherit}.burger{display:none}
-@media(max-width:960px){.burger{display:grid}.links{position:absolute;top:68px;left:0;right:0;background:var(--surface);flex-direction:column;padding:1rem 4%;gap:.8rem;border-bottom:1px solid var(--border);display:none}.links.open{display:flex}}
+@media(max-width:1200px){.burger{display:grid}.links{position:absolute;top:68px;left:0;right:0;background:var(--surface);flex-direction:column;padding:1rem 4%;gap:.8rem;border-bottom:1px solid var(--border);display:none}.links.open{display:flex}}
 /* buttons */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;background:var(--primary);color:#fff;border:0;border-radius:99px;padding:.7rem 1.4rem;font-weight:600;cursor:pointer;transition:transform .2s,background .2s}
 [data-theme=dark] .btn{color:#2b0d0d}

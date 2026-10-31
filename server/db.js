@@ -98,7 +98,20 @@ const MIGRATIONS = [
     updated_at INTEGER NOT NULL,
     PRIMARY KEY (user_id, id)
   );
-  CREATE INDEX idx_packing_user ON packing_lists(user_id, updated_at);
+    CREATE INDEX idx_packing_user ON packing_lists(user_id, updated_at);
+  `,
+  /* 3: Travel Personality – saved quiz results (one row per quiz run; guests are never stored). */
+  `
+  CREATE TABLE personality_results (
+    id                    INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id               TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    primary_personality   TEXT NOT NULL CHECK (primary_personality IN ('nature','adventure','history','spiritual','beach','culture','photo')),
+    secondary_personality TEXT CHECK (secondary_personality IS NULL OR secondary_personality IN ('nature','adventure','history','spiritual','beach','culture','photo')),
+    quiz_answers          TEXT NOT NULL,
+    scores                TEXT NOT NULL,
+    created_at            TEXT NOT NULL
+  );
+  CREATE INDEX idx_personality_user ON personality_results(user_id, id);
   `
 ];
 
